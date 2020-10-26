@@ -4,7 +4,6 @@ import windows as w
 from tkinter.filedialog import askopenfilename
 import pymysql
  
-
 #wywietlanie informacji
 def displayInfo(self):
     w.getInfoFrame(self)
@@ -26,12 +25,14 @@ def changeImage(self, image):
     display_image = getDisplayImage(image)
     self.canvasImage = self.canvas.create_image((300-display_image.width())/2, (300-display_image.height())/2, image=display_image, anchor='nw')
 
-#sklaowanie obrazu
+#skalowanie obrazu
 def getDisplayImage(image):
     width, height = image.size
+    #powiększanie
     if width<=300 and height<=300:
         if width*2<=300 and height*2<=300*2:
             image = image.resize((width*2, height*2)) 
+    #zmniejszanie
     else:
         ratio = min(300/width, 300/height)
         image = image.resize((int(ratio*width), int(ratio*height)))
@@ -54,15 +55,18 @@ def openDB(self):
     global inCF
     w.connectToDB(self, True)
     inCF = False 
-    
+
+#sprawdzanie czy wprowadzana wartość jest liczbą    
 def checkNumber(user_input):      
     return user_input.isdigit()    
 
+#konwersja obrazu na dane binarne
 def convertToBinary(filepath):
     with open(filepath, 'rb') as file:
        db_image = file.read()
     return db_image
 
+#wykonywanie wprowadzonego polecenia
 def executeDB(self, openFile, id_person, hand, finger):
     global image
     if len(id_person)==0:
@@ -76,6 +80,7 @@ def executeDB(self, openFile, id_person, hand, finger):
             data = cursor.fetchall()
             connection.commit()
             inDB = False if len(data)==0 else True
+            #operacja odczytu
             if openFile:
                 if inDB: 
                     try:
@@ -92,6 +97,7 @@ def executeDB(self, openFile, id_person, hand, finger):
                         w.getCommandMessage()
                 else:
                     w.getNotInMessage()
+            #operacja zapisu
             else:
                 if not inDB:
                     try:

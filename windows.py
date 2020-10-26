@@ -3,27 +3,35 @@ import tkinter.ttk as ttk
 import functions as f
 import style as s
 
+#okno dialogowe informujace o problemach z obrazem
 def getImageMessage():
     tk.messagebox.showerror(title='Problem z obrazem', message='Proszę wczytać obraz z plików komputera')
 
+#okno dialogowe informujace o problemach z połączeniem
 def getConnectionMessage():
     tk.messagebox.showerror(title='Problem z połączeniem', message='Nie udało się nawiązać połączenia z bazą')
-  
+
+#okno dialogowe informujace o problemach z poleceniem  
 def getCommandMessage():
     tk.messagebox.showerror(title='Problem z poleceniem', message='Nie udało się przeprowadzić operacji. Proszę sprawdzić poprawność wprowadzonych danych')
 
+#okno dialogowe informujace o problemach z ID
 def getNoIDMessage():
-    tk.messagebox.showerror(title='Problem z brakiem ID', message='Proszę wprowadzić ID')
-        
+    tk.messagebox.showerror(title='Problem z ID', message='Proszę wprowadzić ID')
+
+#okno dialogowe informujace o poprawnym wykonaniu polecenia        
 def getDoneMessage():
     tk.messagebox.showinfo(title='Zakończono połączenie', message='Przeprowadzono operację')
 
+#okno dialogowe informujace o braku danych w bazie
 def getNotInMessage():
     tk.messagebox.showerror(title='Problem z danymi', message='Brak danych w bazie')
 
+#okno dialogowe informujace o obecności danych w bazie
 def getInMessage():
     tk.messagebox.showerror(title='Problem z danymi', message='Dla podanych danych istnieje już obraz. Poroszę zmienić wartości')
     
+#okno zawierające informacje o programie
 def getInfoFrame(self):
     self.info = tk.Toplevel(self.root, width=450, height=200, background=s.color4)
     self.info.grab_set()
@@ -37,10 +45,13 @@ def getInfoFrame(self):
     self.infoText = tk.Label(self.info, text=s.infoText, bg=s.color2, font=s.textFont)
     self.infoText.place(relwidth=0.95, relheight=0.9, relx=0.025, rely=0.05)
 
+#okno do wprowadzania informacji o odczycie/zapisie danych
 def connectToDB(self, openFile):
+    #odczyt danych
     if openFile==True:
         title = 'Odczytaj obraz'
         button_text = 'Odczytaj'
+    #zapis danych
     else:
         title = 'Zapisz obraz'
         button_text = 'Zapisz'
@@ -50,13 +61,13 @@ def connectToDB(self, openFile):
     self.db.title(title)
     self.db.iconbitmap(s.dbIcon)
     self.db.resizable(0, 0)
-    
+    #pole do wpisywania
     self.idLabel = tk.Label(self.db, text='ID', bg=s.color2, font=s.labelFont)
     self.idLabel.place(x=0, y=0, width=100, height=25)
     valid = self.db.register(f.checkNumber)
     self.idEntry = tk.Entry(self.db, validate='key', validatecommand=(valid, '%S'), font=s.inputFont) 
     self.idEntry.place(x=0, y=25, width=100) 
-    
+    #pola wyboru
     self.handLabel = tk.Label(self.db, text='Ręka', bg=s.color2, font=s.labelFont)
     self.handLabel.place(x=100, y=0, width=100, height=25)
     self.handCB = ttk.Combobox(self.db, state="readonly", font=s.inputFont) 
@@ -69,6 +80,6 @@ def connectToDB(self, openFile):
     self.fingerCB['values'] = ('Kciuk', 'Wskazujący', 'Środkowy', 'Serdeczny', 'Mały')
     self.fingerCB.current(0)
     self.fingerCB.place(x=200, y=25, width=100) 
-    
+    #przycisk do wykonania polecenia
     self.dbButton = tk.Button(self.db, text=button_text, command=lambda: f.executeDB(self, openFile, self.idEntry.get(), self.handCB.get(), self.fingerCB.get()), font=s.buttonFont)
     self.dbButton.place(width=80, height=40, x=110, y=55)        
