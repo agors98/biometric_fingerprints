@@ -3,7 +3,8 @@ import io
 import windows as w
 from tkinter.filedialog import askopenfilename
 import pymysql
- 
+import app
+import cv2
 #wywietlanie informacji
 def displayInfo(self):
     w.getInfoFrame(self)
@@ -12,10 +13,12 @@ def displayInfo(self):
 def openCF(self):
     global filepath
     global image
+    global image_for_processing 
     global inCF
     filepath=askopenfilename(title='Wybierz plik', filetypes=(('Image fies', '*.jpg *.jpeg *.png'),))
     if len(filepath)!=0:
         image = Image.open(filepath)
+        image_for_processing = cv2.imread(filepath,0) 
         changeImage(self, image)
         inCF = True
 
@@ -122,6 +125,7 @@ def executeProgram(self):
     #sprawdzanie wczytania obrazu przed uruchomieniem
     if 'display_image' in globals():
         image.show()
+        app.imagepreproces(image_for_processing)
     else:
         w.getImageMessage()
     
