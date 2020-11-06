@@ -3,33 +3,13 @@ import tkinter.ttk as ttk
 import functions as f
 import style as s
 
-#okno dialogowe informujace o problemach z obrazem
-def getImageMessage():
-    tk.messagebox.showerror(title='Problem z obrazem', message='Proszę wczytać obraz z plików komputera')
+#okno dialogowe informujące o błędach
+def getErrMessage(title, text):
+    tk.messagebox.showerror(title=title, message=text)
 
-#okno dialogowe informujace o problemach z połączeniem
-def getConnectionMessage():
-    tk.messagebox.showerror(title='Problem z połączeniem', message='Nie udało się nawiązać połączenia z bazą')
-
-#okno dialogowe informujace o problemach z poleceniem  
-def getCommandMessage():
-    tk.messagebox.showerror(title='Problem z poleceniem', message='Nie udało się przeprowadzić operacji. Proszę sprawdzić poprawność wprowadzonych danych')
-
-#okno dialogowe informujace o problemach z ID
-def getNoIDMessage():
-    tk.messagebox.showerror(title='Problem z ID', message='Proszę wprowadzić ID')
-
-#okno dialogowe informujace o poprawnym wykonaniu polecenia        
-def getDoneMessage():
-    tk.messagebox.showinfo(title='Zakończono połączenie', message='Przeprowadzono operację')
-
-#okno dialogowe informujace o braku danych w bazie
-def getNotInMessage():
-    tk.messagebox.showerror(title='Problem z danymi', message='Brak danych w bazie')
-
-#okno dialogowe informujace o obecności danych w bazie
-def getInMessage():
-    tk.messagebox.showerror(title='Problem z danymi', message='Dla podanych danych istnieje już obraz. Poroszę zmienić wartości')
+#okno dialogowe wyświetlające informacje
+def getInfoMessage(title, text):
+    tk.messagebox.showinfo(title=title, message=text)
     
 #okno zawierające informacje o programie
 def getInfoFrame(self):

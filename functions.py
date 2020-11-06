@@ -1,6 +1,8 @@
+import tkinter as tk
 from PIL import Image, ImageTk
 import io
 import windows as w
+import style as s
 from tkinter.filedialog import askopenfilename
 import pymysql
  
@@ -46,9 +48,9 @@ def saveCF(self):
         if inCF:
             w.connectToDB(self, False)
         else:
-            w.getImageMessage()
+            w.getErrMessage('Problem z obrazem', 'Proszę wczytać obraz z plików komputera')
     else:
-        w.getImageMessage()
+        w.getErrMessage('Problem z obrazem', 'Proszę wczytać obraz z plików komputera')
                 
 #wczytywanie obrazu z bazt danych
 def openDB(self):
@@ -70,7 +72,7 @@ def convertToBinary(filepath):
 def executeDB(self, openFile, id_person, hand, finger):
     global image
     if len(id_person)==0:
-        w.getNoIDMessage()
+        w.getErrMessage('Problem z ID', 'Proszę wprowadzić ID')
     else:
         try:
             connection = pymysql.connect(host="localhost", user="root", passwd="", database="fingerprint_data")
@@ -92,11 +94,11 @@ def executeDB(self, openFile, id_person, hand, finger):
                         image = Image.open(file)
                         changeImage(self, image)
                         self.db.destroy()
-                        w.getDoneMessage()
+                        w.getInfoMessage('Zakończono połączenie', 'Przeprowadzono operację')
                     except:
-                        w.getCommandMessage()
+                        w.getErrMessage('Problem z poleceniem', 'Nie udało się przeprowadzić operacji. Proszę sprawdzić poprawność wprowadzonych danych')
                 else:
-                    w.getNotInMessage()
+                    w.getErrMessage('Problem z danymi', 'Brak danych w bazie') 
             #operacja zapisu
             else:
                 if not inDB:
@@ -107,21 +109,35 @@ def executeDB(self, openFile, id_person, hand, finger):
                         data = cursor.execute(save_sql, db_tuple)
                         connection.commit()
                         self.db.destroy()
-                        w.getDoneMessage()
+                        w.getInfoMessage('Zakończono połączenie', 'Przeprowadzono operację')
                     except:
-                        w.getCommandMessage()
+                        w.getErrMessage('Problem z poleceniem', 'Nie udało się przeprowadzić operacji. Proszę sprawdzić poprawność wprowadzonych danych')
                 else:
-                    w.getNotInMessage()                   
+                    w.getErrMessage('Problem z danymi', 'Dla podanych danych istnieje już obraz. Poroszę zmienić wartości')                    
             cursor.close()
             connection.close()
         except:
-             w.getConnectionMessage()  
+             w.getErrMessage('Problem z połączeniem', 'Nie udało się nawiązać połączenia z bazą')  
 
 #uruchamianie programu
 def executeProgram(self):
     #sprawdzanie wczytania obrazu przed uruchomieniem
     if 'display_image' in globals():
         image.show()
+        #results = []
+        #image = Image.open(file)
+        #changeImage(self, image)
+        #showResults(self, results)
+        w.getInfoMessage('Ekstrakcja zakończona', 'Detekcja została przeprowadzona')
     else:
-        w.getImageMessage()
-    
+        w.getErrMessage('Problem z obrazem', 'Proszę wczytać obraz z plików komputera')
+
+#wyświetlanie wyników
+def showResults(self, results): 
+    self.resultsScrollbar = tk.Scrollbar(self.resultsFrame, orient=tk.VERTICAL)
+    self.resultsScrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    self.resultsCanvas = tk.Canvas(self.resultsFrame, bg=s.color3, yscrollcommand=self.resultsScrollbar.set)
+    self.resultsCanvas.create_text(100, 100, text=results, font=s.textFont)
+    self.resultsCanvas.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+    self.resultsScrollbar.config(command=self.resultsCanvas.yview)
+    self.resultsCanvas.config(scrollregion=self.resultsCanvas.bbox('all'))
