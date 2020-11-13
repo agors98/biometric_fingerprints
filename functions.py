@@ -3,9 +3,11 @@ from PIL import Image, ImageTk
 import io
 import windows as w
 import style as s
+import app as a
+import cv2
 from tkinter.filedialog import askopenfilename
 import pymysql
- 
+import numpy as np
 #wywietlanie informacji
 def displayInfo(self):
     w.getInfoFrame(self)
@@ -15,9 +17,12 @@ def openCF(self):
     global filepath
     global image
     global inCF
+    global imageprep 
     filepath=askopenfilename(title='Wybierz plik', filetypes=(('Image fies', '*.jpg *.jpeg *.png'),))
     if len(filepath)!=0:
         image = Image.open(filepath)
+        imageprep = cv2.imread(filepath,0)
+        print(imageprep)
         changeImage(self, image)
         inCF = True
 
@@ -70,6 +75,7 @@ def convertToBinary(filepath):
 
 #wykonywanie wprowadzonego polecenia
 def executeDB(self, openFile, id_person, hand, finger):
+    global imageprep
     global image
     if len(id_person)==0:
         w.getErrMessage('Problem z ID', 'Proszę wprowadzić ID')
@@ -91,6 +97,7 @@ def executeDB(self, openFile, id_person, hand, finger):
                         connection.commit()
                         data = cursor.fetchall()
                         file = io.BytesIO(data[0][0])
+                        imageprep= cv2.imdecode(np.frombuffer(data[0][0], np.uint8), -1)
                         image = Image.open(file)
                         changeImage(self, image)
                         self.db.destroy()
@@ -123,11 +130,11 @@ def executeDB(self, openFile, id_person, hand, finger):
 def executeProgram(self):
     #sprawdzanie wczytania obrazu przed uruchomieniem
     if 'display_image' in globals():
-        image.show()
-        #results = []
-        #image = Image.open(file)
-        #changeImage(self, image)
-        #showResults(self, results)
+        results = []
+        array = a.imagepreproces(imageprep)
+        image = Image.fromarray(array)
+        changeImage(self, image)
+        showResults(self, results)
         w.getInfoMessage('Ekstrakcja zakończona', 'Detekcja została przeprowadzona')
     else:
         w.getErrMessage('Problem z obrazem', 'Proszę wczytać obraz z plików komputera')

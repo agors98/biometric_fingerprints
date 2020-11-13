@@ -8,7 +8,8 @@ data_vector = []
 def imagepreproces(img):
     image = image_enhance(img)
     image_skel = skeletonize(image)
-    minutiaes_radar(image_skel)
+    return_img = minutiaes_radar(image_skel)
+    return return_img
 
 def minutiaes_radar(img):
     width,height = img.shape
@@ -24,7 +25,8 @@ def minutiaes_radar(img):
                 y_position.append(j)
                 type_minutiaes.append(minutiae)
     x_corr,y_corr,typeMi = remove_misguided(img, x_position, y_position,type_minutiaes)
-    draw_point(img,x_corr,y_corr,typeMi)
+    img = draw_point(img,x_corr,y_corr,typeMi)
+    return img
     
 def draw_point(img,x,y,t):
     width,height = img.shape
@@ -41,8 +43,7 @@ def draw_point(img,x,y,t):
             color_circle = (254,0,0)
         (rr, cc) = skimage.draw.circle_perimeter(x[i], y[i],4)
         skimage.draw.set_color(Img_show, (rr, cc), color_circle)
-    plt.imshow(Img_show,'gray')
-    plt.show()
+    return Img_show
 
 def matrix_search(img,i,j):
     coordinates = [(-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1)]
