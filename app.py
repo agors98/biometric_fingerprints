@@ -1,8 +1,8 @@
 from image_enhance import image_enhance
-from matplotlib import pyplot as plt
 import numpy as np
 from skimage.morphology import skeletonize
 import skimage
+import numpy 
 data_vector = []
 
 def imagepreproces(img):
@@ -25,9 +25,9 @@ def minutiaes_radar(img):
                 y_position.append(j)
                 type_minutiaes.append(minutiae)
     x_corr,y_corr,typeMi = remove_misguided(img, x_position, y_position,type_minutiaes)
-    img = draw_point(img,x_corr,y_corr,typeMi)
-    return img
-    
+    return_img = draw_point(img,x_corr,y_corr,typeMi)
+    return return_img
+
 def draw_point(img,x,y,t):
     width,height = img.shape
     img = img*255
@@ -78,9 +78,7 @@ def remove_misguided(img,x,y,typeM):
             typeMi.append(typeM[k])
             data_vector.extend([typeM[k],x[k],y[k]])
     return x_corr,y_corr,typeMi
-            
-            
-    
+                    
 def treshold_search(img):
     width,height = img.shape
     near_point = []
@@ -96,6 +94,3 @@ def treshold_search(img):
                         break
     treshold = np.mean(near_point)
     return treshold
-    
-
-

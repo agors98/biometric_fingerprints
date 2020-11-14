@@ -1,5 +1,4 @@
 import tkinter as tk
-import tkinter.ttk as ttk
 import functions as f
 import style as s
 
@@ -35,31 +34,22 @@ def connectToDB(self, openFile):
     else:
         title = 'Zapisz obraz'
         button_text = 'Zapisz'
-    self.db = tk.Toplevel(self.root, width=300, height=100, background=s.color4)
+    self.db = tk.Toplevel(self.root, width=300, height=46, background=s.color4)
     self.db.grab_set()
-    self.db.geometry('+%d+%d' % (self.root.winfo_x()+175, self.root.winfo_y()+250))
+    self.db.geometry('+%d+%d' % (self.root.winfo_x()+175, self.root.winfo_y()+277))
     self.db.title(title)
     self.db.iconbitmap(s.dbIcon)
     self.db.resizable(0, 0)
     #pole do wpisywania
+    valid = self.db.register(f.checkNumber)
     self.idLabel = tk.Label(self.db, text='ID', bg=s.color2, font=s.labelFont)
     self.idLabel.place(x=0, y=0, width=100, height=25)
-    valid = self.db.register(f.checkNumber)
     self.idEntry = tk.Entry(self.db, validate='key', validatecommand=(valid, '%S'), font=s.inputFont) 
     self.idEntry.place(x=0, y=25, width=100) 
-    #pola wyboru
-    self.handLabel = tk.Label(self.db, text='Ręka', bg=s.color2, font=s.labelFont)
-    self.handLabel.place(x=100, y=0, width=100, height=25)
-    self.handCB = ttk.Combobox(self.db, state="readonly", font=s.inputFont) 
-    self.handCB['values'] = ('Prawa', 'Lewa')
-    self.handCB.current(0)
-    self.handCB.place(x=100, y=25, width=100)
-    self.handLabel = tk.Label(self.db, text='Palec', bg=s.color2, font=s.labelFont)
-    self.handLabel.place(x=200, y=0, width=100, height=25)
-    self.fingerCB = ttk.Combobox(self.db, state="readonly", font=s.inputFont) 
-    self.fingerCB['values'] = ('Kciuk', 'Wskazujący', 'Środkowy', 'Serdeczny', 'Mały')
-    self.fingerCB.current(0)
-    self.fingerCB.place(x=200, y=25, width=100) 
+    self.nrLabel = tk.Label(self.db, text='Nr', bg=s.color2, font=s.labelFont)
+    self.nrLabel.place(x=100, y=0, width=100, height=25)
+    self.nrEntry = tk.Entry(self.db, validate='key', validatecommand=(valid, '%S'), font=s.inputFont) 
+    self.nrEntry.place(x=100, y=25, width=100)
     #przycisk do wykonania polecenia
-    self.dbButton = tk.Button(self.db, text=button_text, command=lambda: f.executeDB(self, openFile, self.idEntry.get(), self.handCB.get(), self.fingerCB.get()), font=s.buttonFont)
-    self.dbButton.place(width=80, height=40, x=110, y=55)        
+    self.dbButton = tk.Button(self.db, text=button_text, command=lambda: f.executeDB(self, openFile, self.idEntry.get(), self.nrEntry.get()), font=s.buttonFont)
+    self.dbButton.place(width=80, height=40, x=210, y=3)        
