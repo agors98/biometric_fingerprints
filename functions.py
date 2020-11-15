@@ -127,19 +127,12 @@ def executeDB(self, openFile, id_person, nr):
 
 #uruchamianie programu
 def executeProgram(self):
-    try:    
-        #sprawdzanie wczytania obrazu przed uruchomieniem
-        if 'display_image' in globals():
-            results = []
-            array = a.imagepreproces(imageprep)
-            image = Image.fromarray(np.uint8(array)).convert('RGB')
-            changeImage(self, image)
-            showResults(self, results)
-            w.getInfoMessage('Ekstrakcja zakończona', 'Detekcja została przeprowadzona')
-        else:
-            w.getErrMessage('Problem z obrazem', 'Proszę wczytać obraz z plików komputera')
-    except:
-            w.getErrMessage('Problem z obrazem', 'Wgrany obraz nie spełnia wymogów jakociowych')
+    if 'display_image' in globals():
+        array, results = a.imagepreproces(imageprep)
+        image = Image.fromarray(np.uint8(array)).convert('RGB')
+        changeImage(self, image)
+        showResults(self, results)
+        w.getInfoMessage('Ekstrakcja zakończona', 'Detekcja została przeprowadzona')
 
 #wyświetlanie wyników
 def showResults(self, results): 

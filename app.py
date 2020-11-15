@@ -3,13 +3,13 @@ import numpy as np
 from skimage.morphology import skeletonize
 import skimage
 import numpy 
-data_vector = []
+import math
 
 def imagepreproces(img):
     image = image_enhance(img)
     image_skel = skeletonize(image)
-    return_img = minutiaes_radar(image_skel)
-    return return_img
+    return_img, vetor_features = minutiaes_radar(image_skel)
+    return return_img, vetor_features
 
 def minutiaes_radar(img):
     width,height = img.shape
@@ -25,8 +25,64 @@ def minutiaes_radar(img):
                 y_position.append(j)
                 type_minutiaes.append(minutiae)
     x_corr,y_corr,typeMi = remove_misguided(img, x_position, y_position,type_minutiaes)
+    orientation_T, orientation_B = get_orient(img,x_corr,y_corr,typeMi)
     return_img = draw_point(img,x_corr,y_corr,typeMi)
-    return return_img
+    vetor_features = get_vectors(x_corr,y_corr,typeMi,orientation_T, orientation_B)
+    return return_img, vetor_features
+
+def get_vectors(x_corr,y_corr,typeMi,T, B):
+    vector = "Wyniki są przedstawione w wektorze,\n który zawiera informacje:\n- współrzędna x\n- współrzędna y\n- typ: 0 - zakończenie; 1 - rozwidlenie\n- orientacja punktu \n\n"
+    indexT = 0
+    indexB = 0
+    for i in range(len(x_corr)):
+        if typeMi[i] == 0:
+            vector+="["+str(x_corr[i])+","+str(y_corr[i])+","+str(typeMi[i])+","+str(T[indexT])+"]"+"\n"
+            indexT+=1
+        elif typeMi[i] == 1:
+            vector+="["+str(x_corr[i])+","+str(y_corr[i])+","+str(typeMi[i])+","+str(B[indexB])+"]"+"\n"
+            indexB+=1
+    return vector
+
+def get_orient(img,x,y,typeM):
+    B_corr = []
+    T_corr = []
+    for i in range(len(typeM)):
+        if typeM[i] == 0:
+            T_corr.append([x[i],y[i]])
+        else:
+            B_corr.append([x[i],y[i]])
+    angle_T = get_angle(img,T_corr,0)
+    angle_B = get_angle(img,B_corr,1)
+    return angle_T, angle_B
+
+def get_angle(img,corr,T):
+     angle_list = []
+     for i in corr:
+        angle_list.append(count(img[i[0]-1:i[0]+2, i[1]-1:i[1]+2],T))
+     return angle_list
+
+def count(extract, minutiaeType):
+    angle = []
+    index = 0
+    if minutiaeType == 0:
+        for i in range(3):
+            for j in range(3):
+                if((i == 0 or i == 2 or j == 0 or j == 2) and extract[i][j] != 0):
+                    angle = math.degrees(math.atan2(i-1, j-1))
+                    if index > 1:
+                        angle = 'nan'
+    elif minutiaeType == 1:
+        for i in range(3):
+            for j in range(3):
+                if ((i == 0 or i == 2 or j == 0 or j == 2) and extract[i][j] != 0):
+                    angle = math.degrees(math.atan2(i - 1, j -1))
+                    index+=1
+        if(index != 3):
+            angle = 'nan'
+    if angle == 0.0 or angle == 'nan':
+        return angle
+    else:
+        return -angle
 
 def draw_point(img,x,y,t):
     width,height = img.shape
@@ -66,17 +122,17 @@ def remove_misguided(img,x,y,typeM):
     treshold = treshold_search(img)
     for i in range(len(x)-1):
         for j in range(i):
-            distanse = np.sqrt((x[j]-x[i])**2+(y[j]-y[i])**2)
-            if distanse< treshold:
-                rem_num.append(i)
-                rem_num.append(j)
+            if typeM[i] == 0:
+                distanse = np.sqrt((x[j]-x[i])**2+(y[j]-y[i])**2)
+                if distanse< treshold:
+                    rem_num.append(i)
+                    rem_num.append(j)
     rem_num = list(tuple(rem_num))
     for k in range(len(x)):
         if not k in rem_num:
             x_corr.append(x[k])
             y_corr.append(y[k])
             typeMi.append(typeM[k])
-            data_vector.extend([typeM[k],x[k],y[k]])
     return x_corr,y_corr,typeMi
                     
 def treshold_search(img):
