@@ -8,7 +8,8 @@ import cv2
 from tkinter.filedialog import askopenfilename
 import pymysql
 import numpy as np
-#wywietlanie informacji
+
+#wyświetlanie informacji
 def displayInfo(self):
     w.getInfoFrame(self)
        
@@ -17,7 +18,7 @@ def openCF(self):
     global filepath, image, inCF, imageprep
     for widget in self.resultsFrame.winfo_children():
         widget.destroy()
-    filepath=askopenfilename(title='Wybierz plik', filetypes=(('Image fies', '*.jpg *.jpeg *.png'),))
+    filepath=askopenfilename(title='Wybierz plik', filetypes=(('PLiki obrazów', '*.jpg *.jpeg *.png'),))
     if len(filepath)!=0:
         image = Image.open(filepath)
         imageprep = cv2.imread(filepath,0)
@@ -44,7 +45,7 @@ def getDisplayImage(image):
     display_image = ImageTk.PhotoImage(image)
     return display_image
         
-#wczytywanie obrazu z plików komputera
+#zapisuywanie obrazu do bazy danych
 def saveCF(self):
     #sprawdzanie wczytania obrazu przed uruchomieniem
     if 'display_image' in globals():    
@@ -55,7 +56,7 @@ def saveCF(self):
     else:
         w.getErrMessage('Problem z obrazem', 'Proszę wczytać obraz z plików komputera')
                 
-#wczytywanie obrazu z bazt danych
+#wczytywanie obrazu z bazy danych
 def openDB(self):
     global inCF
     for widget in self.resultsFrame.winfo_children():

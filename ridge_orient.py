@@ -55,7 +55,7 @@ Created on Tue Apr 19 11:31:54 2016
 
 
 import numpy as np;
-import cv2;
+import cv2
 from scipy import ndimage;
 from scipy import signal
 
