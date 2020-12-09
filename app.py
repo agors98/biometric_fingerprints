@@ -76,7 +76,7 @@ def getVectors(xCorr,yCorr,typeMi,T, B):
     """
     vector = ("Wyniki są przedstawione w wektorze,\n który zawiera"+ 
               "informacje:\n- współrzędna x\n- współrzędna y\n- typ:"+
-              " 0 - zakończenie; 1 - rozwidlenie\n- orientacja punktu (od jednej do trzech wartości)\n\n")
+              " 0 - zakończenie; 1 - rozwidlenie\n- orientacja punktu (1-3 wartości)\n\n")
     indexT = 0
     indexB = 0
     for i in range(len(xCorr)):
@@ -159,7 +159,7 @@ def count(extract, minutiaeType):
             for j in range(3):
                 if(((i in values) == True or (j in values) == True) and extract[i][j] != 0):
                     angle.append(math.degrees(math.atan2(i-1, j-1)))
-                    if index != 1:
+                    if index > 1:
                         angle = "n"
     elif minutiaeType == 1:
         for i in range(3):

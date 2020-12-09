@@ -1,7 +1,7 @@
 Program pozwala na ekstrakcję cech na podstawie odcisku palca.
 
 System przyjmuje na wejście obrazy linii papilarnych wczytanych
- z plików komputera (rozszerzenia: JPG, PNG) lub pobranych z bazy danych
+ z plików komputera (rozszerzenia: .jpg, .png) lub pobranych z bazy danych
 (systemowo zapewniono 160 obrazów od 20 osób). 
 
 Wynik zostanie wyświetlony w formie graficznej oraz w formie informacji 

@@ -19,7 +19,7 @@ class Gui:
         s.makeFonts(self.root)  
         
         #wyświetlanie informacji
-        self.displayButton = tk.Button(master=self.root, text='ⓘ', command=lambda: f.displayInfo(self), font=s.infoFont)
+        self.displayButton = tk.Button(master=self.root, text='ⓘ', command=lambda: w.getInfoFrame(self), font=s.infoFont)
         self.displayButton.place(relx=0.93, rely=0.02)
         
         #wczytywanie obrazu z plików komputera i zapisywanie go do bazy
@@ -33,7 +33,7 @@ class Gui:
         #wczytywanie obrazu z bazy danych
         self.openDBLabel = tk.Label(self.root, text='Wczytaj obraz z bazy danych', bg=s.color3, font=s.labelFont)
         self.openDBLabel.place(width=300, relx=0.03, rely=0.22)
-        self.openDBButton = tk.Button(master=self.root, text='Wczytaj z bazy', command=lambda: w.getInfoFrame(self), font=s.buttonFont)
+        self.openDBButton = tk.Button(master=self.root, text='Wczytaj z bazy', command=lambda: f.openDB(self), font=s.buttonFont)
         self.openDBButton.place(width=120, relx=90/650+0.03, rely=0.27)
         
         #wyświetlanie obrazu

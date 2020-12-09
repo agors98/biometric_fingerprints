@@ -23,7 +23,7 @@ def openCF(self):
     global filepath, image, inCF, imageprep
     for widget in self.resultsFrame.winfo_children():
         widget.destroy()
-    filepath=askopenfilename(title='Wybierz plik', filetypes=(('PLiki obrazów', '*.jpg *.jpeg *.png'),))
+    filepath=askopenfilename(title='Wybierz plik', filetypes=(('Pliki obrazów', '*.jpg *.jpeg *.png'),))
     if len(filepath)!=0:
         image = Image.open(filepath)
         imageprep = cv2.imread(filepath,0)
