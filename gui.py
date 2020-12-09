@@ -1,9 +1,13 @@
+"""
+Moduł zawierający implementacje interfejsu graficznego
+"""
 import tkinter as tk
 import style as s
 import functions as f
+import windows as w
 
 class Gui:
- 
+    '''Klasa implementująca główne okno interfejsu graficznego'''
     def __init__(self):
         self.root = tk.Tk()
         self.root.title('System ekstrakcji cech na podstawie odcisku palca')
@@ -29,7 +33,7 @@ class Gui:
         #wczytywanie obrazu z bazy danych
         self.openDBLabel = tk.Label(self.root, text='Wczytaj obraz z bazy danych', bg=s.color3, font=s.labelFont)
         self.openDBLabel.place(width=300, relx=0.03, rely=0.22)
-        self.openDBButton = tk.Button(master=self.root, text='Wczytaj z bazy', command=lambda: f.openDB(self), font=s.buttonFont)
+        self.openDBButton = tk.Button(master=self.root, text='Wczytaj z bazy', command=lambda: w.getInfoFrame(self), font=s.buttonFont)
         self.openDBButton.place(width=120, relx=90/650+0.03, rely=0.27)
         
         #wyświetlanie obrazu
