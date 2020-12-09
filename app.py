@@ -12,11 +12,11 @@ def imagepreproces(img):
     """ Funkcja umożliwiająca przetworzenie dostarczonego obrazu.
     
     Funkcja imagepreprocess wywołuje funkcję image_enhace dokonującą 
-    preprocesingu obrazu odcisku palca. Przeetworzony obraz poddawany 
+    wstępnego przetwarzania obrazu odcisku palca. Przetworzony obraz poddawany 
     jest szkieletyzacji oraz wywoływana jest funkcja wykrywająca minucje.
     :param img: Obraz odcisku palca.
     :type img: numpy.ndarray
-    :returns: Obraz odcisku ze wskazanymi miejscami minucji i wektor cech.
+    :returns: Obraz odcisku ze wskazanymi miejscami minucji, wektor cech.
     :rtype: numpy.ndarray, String
     """
     image = image_enhance(img)
@@ -25,16 +25,15 @@ def imagepreproces(img):
     return returnImg, vetorFeatures
 
 def minutiaesRadar(img):
-    """ Funkcja umożliwiająca lokalizację minuncji.
+    """ Funkcja umożliwiająca lokalizacje minuncji.
     
-    Funkcja minutiaesRadar przekazuje do funkcji ekstrahującej minucji 
-    maciesz 3x3 z obrazu, zwrócone dane zapisuje do listy. Wywołuje funkcję 
-    usuwającą fałszywe minucje, okrelającą orientację, tworzącą obraz 
-    w rozrysowanymi wykrytymi minucjami oraz tworzącą wektor cech
+    Funkcja minutiaesRadar przekazuje do funkcji ekstrahującej minucje 
+    maciesz 3x3 z obrazu, a zwrócone dane zapisuje do listy. Wywołuje funkcje: 
+    usuwania fałszywych minucji, okrelania orientacji, tworzenia obrazu 
+    z rozrysowanymi wykrytymi minucjami oraz tworzenia wektora cech
     :param img: Obraz odcisku palca.
     :type img: numpy.ndarray
-    :returns: Obraz odcisku palca ze wskazanymi miejscami minucji.
-    i wektor cech.
+    :returns: Obraz odcisku palca ze wskazanymi miejscami minucji, wektor cech.
     :rtype: numpy.ndarray, str
     """
     width,height = img.shape
@@ -126,7 +125,7 @@ def getAngle(img,corr,T):
     :type img: numpy.ndarray
     :param corr: Lista współrzędnych y minucji.
     :type corr: list
-    :param T: Okrelenie typu minucji
+    :param T: Okrelenie typu minucji.
     :type T: int
     :returns: Listę kątów jednego typu minucji.
     :rtype: list
@@ -135,7 +134,7 @@ def getAngle(img,corr,T):
     for i in corr:
        angleList.append(count(img[i[0]-1:i[0]+2, i[1]-1:i[1]+2],T))
     return angleList
-
+#NAPISAC OD NOWA
 def count(extract, minutiaeType):
     """ Funkcja wyznaczająca kąt.
     
@@ -179,7 +178,7 @@ def count(extract, minutiaeType):
              angleProperty += str(-angle[index2])+", "
          index+=1
     return angleProperty
-
+#BRAK T
 def drawPoint(img,x,y,t):
     """ Funkcja oznaczająca wyznaczone minucje na obrazie.
     
@@ -210,11 +209,12 @@ def drawPoint(img,x,y,t):
         skimage.draw.set_color(Img_show, (rr, cc), color_circle)
     return Img_show
 
+#SPRAWDZIC WSZYSTKO
 def matrixSearch(img,i,j):
     """ Funkcja sprawdzająca wystąpienie minucji.
     
     Funkcja matrixSearch wyznacza czy w danej macierzy 3x3 występuje minucja.
-    W przypadku wystąpienie zakończenia wynik działania jest równy trzy, a 
+    W przypadku wystąpienia rozwidlenia wynik działania jest równy trzy, a 
     w przypadku zakończenia jeden.
     :param img: Obraz odcisku palca.
     :type img: numpy.ndarray
@@ -224,7 +224,7 @@ def matrixSearch(img,i,j):
     :type y: list
     :param typeM: Lista zawierająca określenie typu danej minucji.
     :type typeM: list
-    :returns: Typ minucji:jeśli 0 jest to zakończeni, jeśli 1 jest to 
+    :returns: Typ minucji: jeśli 0 jest to zakończeni, jeśli 1 jest to 
     rozwidlenie i jeśli zwracane jest 2 minucja nie występuje w macierzy.
     :rtype: int
     """
@@ -239,7 +239,7 @@ def matrixSearch(img,i,j):
         if proceedings / 2 == 3:
             return 1
     return 2
-
+#BRAK TYPEM
 def removeMisguided(img,x,y,typeM):
     """ Funkcja usuwająca fałszywe minucje.
     

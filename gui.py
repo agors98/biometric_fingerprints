@@ -1,5 +1,5 @@
 """
-Moduł zawierający implementacje interfejsu graficznego
+Moduł zawierający implementacje głównego okna interfejsu graficznego
 """
 import tkinter as tk
 import style as s
@@ -12,7 +12,7 @@ class Gui:
         self.root = tk.Tk()
         self.root.title('System ekstrakcji cech na podstawie odcisku palca')
         self.root.iconbitmap(s.mainIcon)
-        self.root.configure(bg=s.color0)
+        self.root.configure(bg=s.color1)
         self.root.geometry('650x600')
         self.root.resizable(0, 0)
         

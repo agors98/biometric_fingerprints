@@ -16,8 +16,10 @@ import numpy as np
 def openCF(self):
     ''' Funkcja wczytująca obraz z plików komputera.
     
-    Funkcja openCF otwiera okno dialogowe
-    i pozwala na wgranie obrazu z plików komputera.
+    Funkcja openCF otwiera okno dialogowe i pozwala na wgranie obrazu
+    z plików komputera. Wywoływana jest funkcja changeImage, która
+    zmienia wyświetlany obraz. Dodatkowo następuje ustawienie zmiennej 
+    infomującej o pochodzeniu pliku na plik z komputera.
     :returns: None
     '''
     global filepath, image, inCF, imageprep
@@ -47,7 +49,9 @@ def getDisplayImage(image):
     ''' Funkcja dopasowująca rozmiary obrazu do wyświetlenia.
     
     Funkcja getDisplayImage zmienia rozmiar wgranego obrazu 
-    w celu dopasowania go do wyświetlenia w panelu.
+    w celu dopasowania go do wyświetlenia w panelu. Obraz jest zmniejszany do 
+    uzyskania 300 pikseli na dłuższym boku lub dwukrotnie zwiększany jeżeli
+    jego rozmiar jest mniejszy od 150 pikseli na obu bokach.
     :param image: Obraz odcisku palca.
     :type image: PIL.Image
     :returns: None
@@ -67,7 +71,7 @@ def getDisplayImage(image):
 def saveCF(self):
     ''' Funkcja podejmująca próbę zapisu obrazu do bazy danych.
     
-    Funkcja saveCF sprawdza wgranie obrazu
+    Funkcja saveCF sprawdza wgranie obrazu z plików komputera
     i podejmuje próbę jego zapisu w bazie danych.
     :returns: None
     '''
@@ -83,7 +87,9 @@ def saveCF(self):
 def openDB(self):
     ''' Funkcja podejmujaca próbę wczytania obrazu z bazy danych.
     
-    Funkcja openDB podejmuje próbę wczytania obrazu z bazy danych.
+    Funkcja openDB podejmuje próbę wczytania obrazu z bazy danych. 
+    Dodatkowo następuje ustawienie zmiennej infomującej o pochodzeniu pliku
+    na plik z bazy.
     :returns: None
     '''
     global inCF
@@ -106,7 +112,7 @@ def checkNumber(user_input):
 def convertToBytes(filepath):
     ''' Funkcja konwertująca obraz na bajty.
     
-    Funkcja convertToBinary przeprowadza konwersję obrazu na bajty. 
+    Funkcja convertToBytes przeprowadza konwersję obrazu na bajty. 
     :param filepath: Ścieżka do pliku z obrazem.
     :type filepath: str
     :returns: Plik obrazu przekonwertowany na bajty.
@@ -119,11 +125,15 @@ def convertToBytes(filepath):
 def executeDB(self, openFile, id_person, nr):
     ''' Funkcja przekazująca komendy do bazy danych.
     
-    Funkcja executeDB przekazuje komendy dotyczące odczytu
-    lub zapisu pliku do bazy danych. 
+    Funkcja executeDB łączy się z bazą danych i przekazuje jej komendę.
+    Przed wywołaniem sprawdzana jest obecność danych opisywanych przekazanymi
+    parametrami w bazie. Operacja odczytu wykona się tylko jeżeli dane
+    znajdują się w bazie, natomiast zapisu tylko w sytuacji ich braku.
+    lub zapisu pliku do bazy danych. Odczyt wiąże się ze zmianą obrazu 
+    wyświetlanego.
     :param openFile: Informacje czy wykonana operacja ma byc odczytem.
     :type openFile: bool
-    :param id_person: Nr ID osoby.
+    :param id_person: ID osoby.
     :type id_person: str
     :param nr: Nr zdjęcia.
     :type nr: str
@@ -183,8 +193,9 @@ def executeDB(self, openFile, id_person, nr):
 def executeProgram(self):
     ''' Funkcja rozpoczynjąca proces ekstrakcji.
     
-    Funkcja executeProgram rozpoczyna proces ekstrakcji cech
-    z dostarczanego odcisku palca.
+    Funkcja executeProgram rozpoczyna proces ekstrakcji cech z dostarczanego
+    odcisku palca. Jej wynikiem jest uzyskanie obrazu z zaznaczonymi minuncjami 
+    oraz wektora cech, które są wywietlane w programie. 
     :returns: None
     '''    
     if 'display_image' in globals():

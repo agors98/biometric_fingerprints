@@ -7,7 +7,7 @@ import pymysql
 def convertToBytes(filepath):
     ''' Funkcja konwertująca obraz na bajty.
     
-    Funkcja convertToBinary przeprowadza konwersję obrazu na bajty. 
+    Funkcja convertToBytes przeprowadza konwersję obrazu na bajty. 
     :param filepath: Ścieżka do pliku z obrazem.
     :type filepath: str
     :returns: Plik obrazu przekonwertowany na bajty.
@@ -22,13 +22,14 @@ def getData(filename):
     
     Funkcja getData pobiera dane na teamt obrazu
     z nazwy pliku przeznaczonego do wgrania, w celu wgrania ich do bazy. 
+    Uzyskiwane wartoci to ID osoby oraz numer zdjęcia.
     :param filename: Nazwa pliku z obrazem.
     :type filename: str
-    :returns: Numer ID osoby, numer zdjęcia.
+    :returns: ID osoby, numer zdjęcia.
     :rtype: str, str
     '''
     id_person = filename[-8:-6]
-    id_person = int(id_person)+10
+    #id_person = int(id_person)+10
     nr = filename[-5]
     print(id_person, nr)
     return id_person, nr
@@ -36,8 +37,9 @@ def getData(filename):
 def forAllFiles(filespath): 
     ''' Funkcja wgrywająca wszytkie pliki z folderu do bazy.
     
-    Funkcja forAllFiles łączy się z bazą danych 
-    i wgrywa do niej wszystkie pliki umieszczone w folderze.
+    Funkcja forAllFiles łączy się z bazą danych. Następnie uzyskuje odpowiednie
+    dane z funkcji: convertToBytes oraz getData. Takie informacje są wgrywane
+    do bazy danych. Operacja jest przeprowadzana dla wszytskich plików w folderze.
     :param filespath: Ścieżka do folderu z obrazami.
     :type filespath: str
     :returns: None
@@ -54,5 +56,5 @@ def forAllFiles(filespath):
         cursor.execute(save_sql, db_tuple)
         connection.commit()
 
-filespath = "c:/Users/agors/Desktop/Studia/Podstawy biometrii/Projekt/Mój/Dane/DB2/*.png" 
+filespath = "c:/Users/agors/Desktop/Studia/Podstawy biometrii/Projekt/Mój/Dane/DB1/*.png" 
 forAllFiles(filespath)

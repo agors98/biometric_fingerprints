@@ -9,8 +9,7 @@ infoIcon='resources/info.ico'
 dbIcon='resources/db.ico'
 
 #kolory
-color0='#2e2e2e'
-color1='#c1c1c1'
+color1='#2e2e2e'
 color2='#dfdfdf'
 color3='#d64162'
 color4='#e48297'
