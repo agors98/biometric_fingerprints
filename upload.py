@@ -1,27 +1,52 @@
+"""
+Moduł wgrywający początkowe dane do bazy
+"""
 import glob
 import pymysql
 
-#konwersja obrazu na dane binarne
-def convertToBinary(filepath):
+def convertToBytes(filepath):
+    ''' Funkcja konwertująca obraz na bajty.
+    
+    Funkcja convertToBinary przeprowadza konwersję obrazu na bajty. 
+    :param filepath: Ścieżka do pliku z obrazem.
+    :type filepath: str
+    :returns: Plik obrazu przekonwertowany na bajty.
+    :rtype: bytes
+    '''
     with open(filepath, 'rb') as file:
        db_image = file.read()
     return db_image         
 
-#wyciąganie danych z nazwy pliku
 def getData(filename):
+    ''' Funkcja pobierająca dane na temat obrazu.
+    
+    Funkcja getData pobiera dane na teamt obrazu
+    z nazwy pliku przeznaczonego do wgrania, w celu wgrania ich do bazy. 
+    :param filename: Nazwa pliku z obrazem.
+    :type filename: str
+    :returns: Numer ID osoby, numer zdjęcia.
+    :rtype: str, str
+    '''
     id_person = filename[-8:-6]
-    #id_person = int(id_person)+10
+    id_person = int(id_person)+10
     nr = filename[-5]
     print(id_person, nr)
     return id_person, nr
 
-#wykonanie operacji zapisywania w bazie dla wszystkich plików
-def forAllFiles(): 
+def forAllFiles(filespath): 
+    ''' Funkcja wgrywająca wszytkie pliki z folderu do bazy.
+    
+    Funkcja forAllFiles łączy się z bazą danych 
+    i wgrywa do niej wszystkie pliki umieszczone w folderze.
+    :param filespath: Ścieżka do folderu z obrazami.
+    :type filespath: str
+    :returns: None
+    '''
     for filepath in glob.iglob(filespath, recursive=True):
         connection = pymysql.connect(host="localhost", user="root", passwd="", database="fingerprint_data")
         cursor = connection.cursor()
         save_sql = 'INSERT INTO fingerprint (id_person, nr, image) VALUES (%s,%s,%s)'
-        db_image = convertToBinary(filepath)
+        db_image = convertToBytes(filepath)
         cut = filepath.rfind("\\")
         filename = filepath[cut:]
         id_person, nr = getData(filename)
@@ -29,7 +54,5 @@ def forAllFiles():
         cursor.execute(save_sql, db_tuple)
         connection.commit()
 
-#scieżka do pliku
-filespath = "c:/Users/agors/Desktop/Studia/Podstawy biometrii/Projekt/Mój/Dane/DB2/*.png"
-    
-forAllFiles()
+filespath = "c:/Users/agors/Desktop/Studia/Podstawy biometrii/Projekt/Mój/Dane/DB2/*.png" 
+forAllFiles(filespath)

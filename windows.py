@@ -1,17 +1,18 @@
+"""
+Moduł zawierający implementacje dodatkowych okien aplikacji
+"""
 import tkinter as tk
 import functions as f
 import style as s
 
-#okno dialogowe informujące o błędach
-def getErrMessage(title, text):
-    tk.messagebox.showerror(title=title, message=text)
 
-#okno dialogowe wyświetlające informacje
-def getInfoMessage(title, text):
-    tk.messagebox.showinfo(title=title, message=text)
-    
-#okno zawierające informacje o programie
 def getInfoFrame(self):
+    """ Funkcja umożliwiająca utworzenie okna z informacji.
+    
+    Funkcja getInfoFrame umożliwa utworzenie okna
+    z informacjami na temat progrmu.
+    :returns: None
+    """
     self.info = tk.Toplevel(self.root, width=450, height=200, background=s.color4)
     self.info.grab_set()
     self.info.geometry('+%d+%d' % (self.root.winfo_x()+100, self.root.winfo_y()+200))
@@ -24,8 +25,15 @@ def getInfoFrame(self):
     self.infoText = tk.Label(self.info, text=s.infoText, bg=s.color2, font=s.textFont)
     self.infoText.place(relwidth=0.95, relheight=0.9, relx=0.025, rely=0.05)
 
-#okno do wprowadzania informacji o odczycie/zapisie danych
 def connectToDB(self, openFile):
+    """ Funkcja umożliwiająca utworzenie okna połączenia z bazą danych.
+    
+    Funkcja connectToDB umożliwa utworzenie okna służącego do wpisywania poleceń
+    przekazywanych do bazy danych.
+    :param openFile: Informacje czy wykonana operacja ma byc odczytem.
+    :type openFile: bool
+    :returns: None
+    """
     #odczyt danych
     if openFile==True:
         title = 'Odczytaj obraz'
