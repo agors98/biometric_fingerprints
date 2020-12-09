@@ -1,3 +1,6 @@
+"""
+Moduł zawierający operację związane z ekstrakcją cech odcisku palca
+"""
 from image_enhance import image_enhance
 import numpy as np
 from skimage.morphology import skeletonize
@@ -6,60 +9,118 @@ import numpy
 import math
 
 def imagepreproces(img):
+    """ Funkcja umożliwiająca przetworzenie dostarczonego obrazu.
+    
+    Funkcja imagepreprocess wywołuje funkcję image_enhace dokonującą 
+    preprocesingu obrazu odcisku palca. Przeetworzony obraz poddawany 
+    jest szkieletyzacji oraz wywoływana jest funkcja wykrywająca minucje.
+    :param img: array
+    :returns: Obraz odcisku ze wskazanymi miejscami minucji i wektor cech.
+    :rtype: array, String
+    """
     image = image_enhance(img)
-    image_skel = skeletonize(image)
-    return_img, vetor_features = minutiaes_radar(image_skel)
-    return return_img, vetor_features
+    imageSkel = skeletonize(image)
+    returnImg, vetorFeatures = minutiaesRadar(imageSkel)
+    return returnImg, vetorFeatures
 
-def minutiaes_radar(img):
+def minutiaesRadar(img):
+    """ Funkcja umożliwiająca lokalizację minuncji.
+    
+    Funkcja minutiaesRadar przekazuje do funkcji ekstrahującej minucji 
+    maciesz 3x3 z obrazu, zwrócone dane zapisuje do listy. Wywołuje funkcję 
+    usuwającą fałszywe minucje, okrelającą orientację, tworzącą obraz 
+    w rozrysowanymi wykrytymi minucjami oraz tworzącą wektor cech
+    :param img: array
+    :returns: Obraz odcisku palca ze wskazanymi miejscami minucji 
+    i wektor cech.
+    :rtype: array, String
+    """
     width,height = img.shape
     img = np.array(img,dtype=np.int)
-    x_position = []
-    y_position = []
-    type_minutiaes = []
+    xPosition = []
+    yPosition = []
+    typeMinutiaes = []
     for i in range(1,width-1):
         for j in range(1,height-1):
             minutiae = matrix_search(img,i,j)
             if minutiae != 2:
-                x_position.append(i)
-                y_position.append(j)
-                type_minutiaes.append(minutiae)
-    x_corr,y_corr,typeMi = remove_misguided(img, x_position, y_position,type_minutiaes)
-    orientation_T, orientation_B = get_orient(img,x_corr,y_corr,typeMi)
-    return_img = draw_point(img,x_corr,y_corr,typeMi)
-    vetor_features = get_vectors(x_corr,y_corr,typeMi,orientation_T, orientation_B)
-    return return_img, vetor_features
+                xPosition.append(i)
+                yPosition.append(j)
+                typeMinutiaes.append(minutiae)
+    xCorr,yCorr,typeMi = removeMisguided(img, xPosition, 
+                                            yPosition,typeMinutiaes)
+    orientationT, orientationB = getOrient(img,xCorr,yCorr,typeMi)
+    returnImg = drawPoint(img,xCorr,yCorr,typeMi)
+    vetorFeatures = getVectors(xCorr,yCorr,typeMi,orientationT, 
+                                 orientationB)
+    return returnImg, vetorFeatures
 
-def get_vectors(x_corr,y_corr,typeMi,T, B):
-    vector = "Wyniki są przedstawione w wektorze,\n który zawiera informacje:\n- współrzędna x\n- współrzędna y\n- typ: 0 - zakończenie; 1 - rozwidlenie\n- orientacja punktu \n\n"
+def getVectors(xCorr,yCorr,typeMi,T, B):
+    """ Funkcja tworząca wektor cech odcisku palca.
+    
+    Funkcja getVectors tworzy ciąg z dostarczonych danych.
+    :param xCorr: List
+    :param yCorr: List
+    :param typeMi: List
+    :param T: List
+    :param B: List
+    :returns: Ciąg danych opisujących punkty szczególne odcisku palca.
+    :rtype: String
+    """
+    vector = ("Wyniki są przedstawione w wektorze,\n który zawiera"+ 
+              "informacje:\n- współrzędna x\n- współrzędna y\n- typ:"+
+              " 0 - zakończenie; 1 - rozwidlenie\n- orientacja punktu \n\n")
     indexT = 0
     indexB = 0
-    for i in range(len(x_corr)):
+    for i in range(len(xCorr)):
         if typeMi[i] == 0:
-            vector+="["+str(x_corr[i])+","+str(y_corr[i])+","+str(typeMi[i])+","+str(T[indexT])+"]"+"\n"
+            vector+=("["+str(xCorr[i])+","+str(yCorr[i])+","+str(typeMi[i])+
+                     ","+str(T[indexT])+"]"+"\n")
             indexT+=1
         elif typeMi[i] == 1:
-            vector+="["+str(x_corr[i])+","+str(y_corr[i])+","+str(typeMi[i])+","+str(B[indexB])+"]"+"\n"
+            vector+=("["+str(xCorr[i])+","+str(yCorr[i])+","+str(typeMi[i])+
+                     ","+str(B[indexB])+"]"+"\n")
             indexB+=1
     return vector
 
-def get_orient(img,x,y,typeM):
-    B_corr = []
-    T_corr = []
+def getOrient(img,x,y,typeM):
+    """ Funkcja określająca orientacje minucji.
+    
+    Funkcja getOrient dzieli współrzędne na położenie zakończeń i rozwidleń.
+    Wywołuje funkcję obliczającą kąty dla każdego z typów minucji oddzielnie.
+    :param img: array
+    :param x: List
+    :param y: List
+    :param typeM: List
+    :returns: Listę kątów obu typów minucji.
+    :rtype: List, List 
+    """
+    BCorr = []
+    TCorr = []
     for i in range(len(typeM)):
         if typeM[i] == 0:
-            T_corr.append([x[i],y[i]])
+            TCorr.append([x[i],y[i]])
         else:
-            B_corr.append([x[i],y[i]])
-    angle_T = get_angle(img,T_corr,0)
-    angle_B = get_angle(img,B_corr,1)
-    return angle_T, angle_B
+            BCorr.append([x[i],y[i]])
+    angleT = getAngle(img,TCorr,0)
+    angleB = getAngle(img,BCorr,1)
+    return angleT, angleB
 
-def get_angle(img,corr,T):
-     angle_list = []
-     for i in corr:
-        angle_list.append(count(img[i[0]-1:i[0]+2, i[1]-1:i[1]+2],T))
-     return angle_list
+def getAngle(img,corr,T):
+    """ Funkcja wyznaczająca kąt.
+    
+    Funkcja getAngle wywołuje dla każdego zestawu współrzędnych 
+    funkcję obliczającą kąt.
+    :param img: array
+    :param corr: List
+    :param T: int
+    :returns: Listę kątów jednego typu minucji.
+    :rtype: List
+    """
+    angleList = []
+    for i in corr:
+       angleList.append(count(img[i[0]-1:i[0]+2, i[1]-1:i[1]+2],T))
+    return angleList
 
 def count(extract, minutiaeType):
     angle = []
@@ -84,7 +145,7 @@ def count(extract, minutiaeType):
     else:
         return -angle
 
-def draw_point(img,x,y,t):
+def drawPoint(img,x,y,t):
     width,height = img.shape
     img = img*255
     color_circle = " "
@@ -114,7 +175,7 @@ def matrix_search(img,i,j):
             return 1
     return 2
 
-def remove_misguided(img,x,y,typeM):
+def removeMisguided(img,x,y,typeM):
     rem_num = []
     x_corr = []
     y_corr = []
