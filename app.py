@@ -117,7 +117,7 @@ def getOrient(img,x,y,typeM):
     return angleT, angleB
 
 def getAngle(img,corr,T):
-    """ Funkcja wyznaczająca kąt.
+    """ Funkcja pośrednicząca w obliczaniu kątów.
     
     Funkcja getAngle wywołuje dla każdego zestawu współrzędnych 
     funkcję obliczającą kąt.
@@ -134,16 +134,14 @@ def getAngle(img,corr,T):
     for i in corr:
        angleList.append(count(img[i[0]-1:i[0]+2, i[1]-1:i[1]+2],T))
     return angleList
-#NAPISAC OD NOWA
+
 def count(extract, minutiaeType):
     """ Funkcja wyznaczająca kąt.
     
-    Funkcja getAngle wywołuje dla każdego zestawu współrzędnych 
-    funkcję obliczającą kąt.
-    :param img: Obraz odcisku palca.
+    Funkcja count oblicza kąt w zależności od typu minucji: 
+    jeśli zakończenie jeden, jeśli rozwidlenie trzy.
+    :param extract: Fragment obrazu odcisku palca.
     :type img: numpy.ndarray
-    :param corr: Lista współrzędnych y minucji.
-    :type corr: list
     :param T: Okrelenie typu minucji
     :type T: int
     :returns: Listę kątów jednego typu minucji.
@@ -178,7 +176,7 @@ def count(extract, minutiaeType):
              angleProperty += str(-angle[index2])+", "
          index+=1
     return angleProperty
-#BRAK T
+
 def drawPoint(img,x,y,t):
     """ Funkcja oznaczająca wyznaczone minucje na obrazie.
     
@@ -190,26 +188,28 @@ def drawPoint(img,x,y,t):
     :type x: list
     :param y: Lista współrzędnych y minucji.
     :type y: list
+    :param t: Lista zawierająca określenie typu danej minucji.
+    :type t: list
     :returns: Obraz odcisku palca ze wskazanymi miejscami minucji.
     :rtype: numpy.ndarray
     """
     width,height = img.shape
     img = img*255
     color_circle = " "
-    Img_show = np.zeros((width,height, 3), np.uint8)
-    Img_show[:, :, 0] = img
-    Img_show[:, :, 1] = img
-    Img_show[:, :, 2] = img
+    imgM = np.zeros((width,height, 3), np.uint8)
+    imgM[:, :, 0] = img
+    imgM[:, :, 1] = img
+    imgM[:, :, 2] = img
     for i in range(len(x)):
         if t[i] ==0:
-            color_circle = (189,236,182)
+            colorCircle = (189,236,182)
         else:
-            color_circle = (254,0,0)
+            colorCircle = (254,0,0)
         (rr, cc) = skimage.draw.circle_perimeter(x[i], y[i],4)
-        skimage.draw.set_color(Img_show, (rr, cc), color_circle)
-    return Img_show
+        skimage.draw.set_color(imgM, (rr, cc), colorCircle)
+    return imgM
 
-#SPRAWDZIC WSZYSTKO
+
 def matrixSearch(img,i,j):
     """ Funkcja sprawdzająca wystąpienie minucji.
     
@@ -218,12 +218,10 @@ def matrixSearch(img,i,j):
     w przypadku zakończenia jeden.
     :param img: Obraz odcisku palca.
     :type img: numpy.ndarray
-    :param x: Lista współrzędnych x minucji.
-    :type x: list
-    :param y: Lista współrzędnych y minucji.
-    :type y: list
-    :param typeM: Lista zawierająca określenie typu danej minucji.
-    :type typeM: list
+    :param i: Współrzędna x.
+    :type i: int
+    :param j: Współrzędna y.
+    :type j: int
     :returns: Typ minucji: jeśli 0 jest to zakończeni, jeśli 1 jest to 
     rozwidlenie i jeśli zwracane jest 2 minucja nie występuje w macierzy.
     :rtype: int
@@ -239,7 +237,7 @@ def matrixSearch(img,i,j):
         if proceedings / 2 == 3:
             return 1
     return 2
-#BRAK TYPEM
+
 def removeMisguided(img,x,y,typeM):
     """ Funkcja usuwająca fałszywe minucje.
     
@@ -252,12 +250,14 @@ def removeMisguided(img,x,y,typeM):
     :type x: list
     :param y: Lista współrzędnych y minucji.
     :type y: list
+    :param typeM: Lista zawierająca określenie typu danej minucji.
+    :type typeM: list
     :returns: Współrzędne x i y oraz typ minucji.
     :rtype: list, list, list
     """
-    rem_num = []
-    x_corr = []
-    y_corr = []
+    remNum = []
+    xCorr = []
+    yCorr = []
     typeMi = []
     treshold = tresholdSearch(img)
     for i in range(len(x)-1):
@@ -265,15 +265,15 @@ def removeMisguided(img,x,y,typeM):
             if typeM[i] == 0:
                 distanse = np.sqrt((x[j]-x[i])**2+(y[j]-y[i])**2)
                 if distanse< treshold:
-                    rem_num.append(i)
-                    rem_num.append(j)
-    rem_num = list(tuple(rem_num))
+                    remNum.append(i)
+                    remNum.append(j)
+    remNum = list(tuple(remNum))
     for k in range(len(x)):
-        if not k in rem_num:
-            x_corr.append(x[k])
-            y_corr.append(y[k])
+        if not k in remNum:
+            xCorr.append(x[k])
+            yCorr.append(y[k])
             typeMi.append(typeM[k])
-    return x_corr,y_corr,typeMi
+    return xCorr,yCorr,typeMi
                     
 def tresholdSearch(img):
     """ Funkcja wyliczającająca średnią odległość między grzbietami.
@@ -286,16 +286,16 @@ def tresholdSearch(img):
     :rtype: float
     """
     width,height = img.shape
-    near_point = []
+    nearPoint = []
     for i in range(int(width/10),int(width-width/10)):
         for j in range(int(width/10),int(height-width/10)):
             if img[i][j]==1:
                 for k in range(1,int(width/10)):
                     if img[i+k][j]==1:
-                        near_point.append(k)
+                        nearPoint.append(k)
                         break
                     elif img[i-k][j]==1:
-                        near_point.append(k)
+                        nearPoint.append(k)
                         break
-    treshold = np.mean(near_point)
+    treshold = np.mean(nearPoint)
     return treshold
