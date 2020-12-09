@@ -14,9 +14,10 @@ def imagepreproces(img):
     Funkcja imagepreprocess wywołuje funkcję image_enhace dokonującą 
     preprocesingu obrazu odcisku palca. Przeetworzony obraz poddawany 
     jest szkieletyzacji oraz wywoływana jest funkcja wykrywająca minucje.
-    :param img: array
+    :param img: Obraz odcisku palca.
+    :type img: numpy.ndarray
     :returns: Obraz odcisku ze wskazanymi miejscami minucji i wektor cech.
-    :rtype: array, String
+    :rtype: numpy.ndarray, String
     """
     image = image_enhance(img)
     imageSkel = skeletonize(image)
@@ -30,10 +31,11 @@ def minutiaesRadar(img):
     maciesz 3x3 z obrazu, zwrócone dane zapisuje do listy. Wywołuje funkcję 
     usuwającą fałszywe minucje, okrelającą orientację, tworzącą obraz 
     w rozrysowanymi wykrytymi minucjami oraz tworzącą wektor cech
-    :param img: array
-    :returns: Obraz odcisku palca ze wskazanymi miejscami minucji 
+    :param img: Obraz odcisku palca.
+    :type img: numpy.ndarray
+    :returns: Obraz odcisku palca ze wskazanymi miejscami minucji.
     i wektor cech.
-    :rtype: array, String
+    :rtype: numpy.ndarray, str
     """
     width,height = img.shape
     img = np.array(img,dtype=np.int)
@@ -42,7 +44,7 @@ def minutiaesRadar(img):
     typeMinutiaes = []
     for i in range(1,width-1):
         for j in range(1,height-1):
-            minutiae = matrix_search(img,i,j)
+            minutiae = matrixSearch(img,i,j)
             if minutiae != 2:
                 xPosition.append(i)
                 yPosition.append(j)
@@ -59,27 +61,32 @@ def getVectors(xCorr,yCorr,typeMi,T, B):
     """ Funkcja tworząca wektor cech odcisku palca.
     
     Funkcja getVectors tworzy ciąg z dostarczonych danych.
-    :param xCorr: List
-    :param yCorr: List
-    :param typeMi: List
-    :param T: List
-    :param B: List
+    :param xCorr: Lista współrzędnych x minucji.
+    :type xCorr: list
+    :param yCorr: Lista współrzędnych y minucji.
+    :type yCorr: list
+    :param typeMi: Lista zawierająca określenie typu danej minucji.
+    :type typeMi: list
+    :param T: List zawierająca obliczony kąt dla zakończenia.
+    :type T: list
+    :param B: List zawierająca obliczony kąt dla rozwidlenia.
+    :type B: list
     :returns: Ciąg danych opisujących punkty szczególne odcisku palca.
     :rtype: String
     """
     vector = ("Wyniki są przedstawione w wektorze,\n który zawiera"+ 
               "informacje:\n- współrzędna x\n- współrzędna y\n- typ:"+
-              " 0 - zakończenie; 1 - rozwidlenie\n- orientacja punktu \n\n")
+              " 0 - zakończenie; 1 - rozwidlenie\n- orientacja punktu (od jednej do trzech wartości)\n\n")
     indexT = 0
     indexB = 0
     for i in range(len(xCorr)):
         if typeMi[i] == 0:
             vector+=("["+str(xCorr[i])+","+str(yCorr[i])+","+str(typeMi[i])+
-                     ","+str(T[indexT])+"]"+"\n")
+                     ", "+str(T[indexT]).strip(", ")+"]"+"\n")
             indexT+=1
-        elif typeMi[i] == 1:
+        elif typeMi[i] == 1 and indexB<len(B):
             vector+=("["+str(xCorr[i])+","+str(yCorr[i])+","+str(typeMi[i])+
-                     ","+str(B[indexB])+"]"+"\n")
+                     ", "+str(B[indexB]).strip(", ")+"]"+"\n")
             indexB+=1
     return vector
 
@@ -88,12 +95,16 @@ def getOrient(img,x,y,typeM):
     
     Funkcja getOrient dzieli współrzędne na położenie zakończeń i rozwidleń.
     Wywołuje funkcję obliczającą kąty dla każdego z typów minucji oddzielnie.
-    :param img: array
-    :param x: List
-    :param y: List
-    :param typeM: List
+    :param img: Obraz odcisku palca.
+    :type img: numpy.ndarray
+    :param x: Lista współrzędnych x minucji.
+    :type x: list
+    :param y: Lista współrzędnych y minucji.
+    :type y: list
+    :param typeM: Lista zawierająca określenie typu danej minucji.
+    :type typeM: list
     :returns: Listę kątów obu typów minucji.
-    :rtype: List, List 
+    :rtype: list, list 
     """
     BCorr = []
     TCorr = []
@@ -111,11 +122,14 @@ def getAngle(img,corr,T):
     
     Funkcja getAngle wywołuje dla każdego zestawu współrzędnych 
     funkcję obliczającą kąt.
-    :param img: array
-    :param corr: List
-    :param T: int
+    :param img: Obraz odcisku palca.
+    :type img: numpy.ndarray
+    :param corr: Lista współrzędnych y minucji.
+    :type corr: list
+    :param T: Okrelenie typu minucji
+    :type T: int
     :returns: Listę kątów jednego typu minucji.
-    :rtype: List
+    :rtype: list
     """
     angleList = []
     for i in corr:
@@ -123,29 +137,63 @@ def getAngle(img,corr,T):
     return angleList
 
 def count(extract, minutiaeType):
+    """ Funkcja wyznaczająca kąt.
+    
+    Funkcja getAngle wywołuje dla każdego zestawu współrzędnych 
+    funkcję obliczającą kąt.
+    :param img: Obraz odcisku palca.
+    :type img: numpy.ndarray
+    :param corr: Lista współrzędnych y minucji.
+    :type corr: list
+    :param T: Okrelenie typu minucji
+    :type T: int
+    :returns: Listę kątów jednego typu minucji.
+    :rtype: list
+    """
     angle = []
     index = 0
+    index2 = 0
+    values = [0,2]
     if minutiaeType == 0:
         for i in range(3):
             for j in range(3):
-                if((i == 0 or i == 2 or j == 0 or j == 2) and extract[i][j] != 0):
-                    angle = math.degrees(math.atan2(i-1, j-1))
-                    if index > 1:
-                        angle = 'nan'
+                if(((i in values) == True or (j in values) == True) and extract[i][j] != 0):
+                    angle.append(math.degrees(math.atan2(i-1, j-1)))
+                    if index != 1:
+                        angle = "n"
     elif minutiaeType == 1:
         for i in range(3):
             for j in range(3):
-                if ((i == 0 or i == 2 or j == 0 or j == 2) and extract[i][j] != 0):
-                    angle = math.degrees(math.atan2(i - 1, j -1))
+                if (((i in values) == True or (j in values) == True) and extract[i][j] != 0):
+                    angle.append(math.degrees(math.atan2(i - 1, j -1)))
                     index+=1
         if(index != 3):
-            angle = 'nan'
-    if angle == 0.0 or angle == 'nan':
-        return angle
-    else:
-        return -angle
+            angle = "n"
+    angleProperty = " "
+    for k in angle:
+         if angle[index2] == 0.0:
+             angleProperty += str(angle[index2])+", "
+         elif angle[index2] == "n":
+             angleProperty += "nan"+", "
+         else:
+             angleProperty += str(-angle[index2])+", "
+         index+=1
+    return angleProperty
 
 def drawPoint(img,x,y,t):
+    """ Funkcja oznaczająca wyznaczone minucje na obrazie.
+    
+    Funkcja drawPoint wyrysowuje na obrazie okręgi w miejscu wystąpienia 
+    minucji. W zależnoci od typu okręg ma kolor zielony lub czerwony.
+    :param img: Obraz odcisku palca.
+    :type img: numpy.ndarray
+    :param x: Lista współrzędnych x minucji.
+    :type x: list
+    :param y: Lista współrzędnych y minucji.
+    :type y: list
+    :returns: Obraz odcisku palca ze wskazanymi miejscami minucji.
+    :rtype: numpy.ndarray
+    """
     width,height = img.shape
     img = img*255
     color_circle = " "
@@ -162,7 +210,24 @@ def drawPoint(img,x,y,t):
         skimage.draw.set_color(Img_show, (rr, cc), color_circle)
     return Img_show
 
-def matrix_search(img,i,j):
+def matrixSearch(img,i,j):
+    """ Funkcja sprawdzająca wystąpienie minucji.
+    
+    Funkcja matrixSearch wyznacza czy w danej macierzy 3x3 występuje minucja.
+    W przypadku wystąpienie zakończenia wynik działania jest równy trzy, a 
+    w przypadku zakończenia jeden.
+    :param img: Obraz odcisku palca.
+    :type img: numpy.ndarray
+    :param x: Lista współrzędnych x minucji.
+    :type x: list
+    :param y: Lista współrzędnych y minucji.
+    :type y: list
+    :param typeM: Lista zawierająca określenie typu danej minucji.
+    :type typeM: list
+    :returns: Typ minucji:jeśli 0 jest to zakończeni, jeśli 1 jest to 
+    rozwidlenie i jeśli zwracane jest 2 minucja nie występuje w macierzy.
+    :rtype: int
+    """
     coordinates = [(-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1)]
     extract = [img[i + k][j + l] for k, l in coordinates]
     proceedings = 0
@@ -176,11 +241,25 @@ def matrix_search(img,i,j):
     return 2
 
 def removeMisguided(img,x,y,typeM):
+    """ Funkcja usuwająca fałszywe minucje.
+    
+    Funkcja removeMisguided odrzuca fałszywe minucje na podstawie tego czy 
+    odległość od najbliższej minucji jest większa niż średnia odległość między 
+    grzbietami.
+    :param img: Obraz odcisku palca.
+    :type img: numpy.ndarray
+    :param x: Lista współrzędnych x minucji.
+    :type x: list
+    :param y: Lista współrzędnych y minucji.
+    :type y: list
+    :returns: Współrzędne x i y oraz typ minucji.
+    :rtype: list, list, list
+    """
     rem_num = []
     x_corr = []
     y_corr = []
     typeMi = []
-    treshold = treshold_search(img)
+    treshold = tresholdSearch(img)
     for i in range(len(x)-1):
         for j in range(i):
             if typeM[i] == 0:
@@ -196,7 +275,16 @@ def removeMisguided(img,x,y,typeM):
             typeMi.append(typeM[k])
     return x_corr,y_corr,typeMi
                     
-def treshold_search(img):
+def tresholdSearch(img):
+    """ Funkcja wyliczającająca średnią odległość między grzbietami.
+    
+    Funkcja tresholdSearch wylicza odległości między grzbietami, a następnie 
+    oblicza średnią wartości.
+    :param img: Obraz odcisku palca.
+    :type img: numpy.ndarray
+    :returns: Średnia odległość między grzbietami.
+    :rtype: float
+    """
     width,height = img.shape
     near_point = []
     for i in range(int(width/10),int(width-width/10)):
