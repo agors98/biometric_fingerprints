@@ -102,7 +102,7 @@ def getOrient(img,x,y,typeM):
     :type y: list
     :param typeM: Lista zawierająca określenie typu danej minucji.
     :type typeM: list
-    :returns: Listę kątów obu typów minucji.
+    :returns: Lista kątów dla zakończenia, lista minuncji dla rozwidlenia.
     :rtype: list, list 
     """
     BCorr = []
@@ -127,7 +127,7 @@ def getAngle(img,corr,T):
     :type corr: list
     :param T: Okrelenie typu minucji.
     :type T: int
-    :returns: Listę kątów jednego typu minucji.
+    :returns: Lista kątów danego typu minucji.
     :rtype: list
     """
     angleList = []
@@ -141,10 +141,10 @@ def count(extract, minutiaeType):
     Funkcja count oblicza kąt w zależności od typu minucji: 
     jeśli zakończenie jeden, jeśli rozwidlenie trzy.
     :param extract: Fragment obrazu odcisku palca.
-    :type img: numpy.ndarray
-    :param T: Okrelenie typu minucji
-    :type T: int
-    :returns: Listę kątów jednego typu minucji.
+    :type extract: numpy.ndarray
+    :param minutiaeType: Okrelenie typu minucji
+    :type minutiaeType: int
+    :returns: Lista kątów danego typu minucji.
     :rtype: list
     """
     angle = []
@@ -178,7 +178,7 @@ def count(extract, minutiaeType):
     return angleProperty
 
 def drawPoint(img,x,y,t):
-    """ Funkcja oznaczająca wyznaczone minucje na obrazie.
+    """ Funkcja zaznaczająca wykryte minucje na obrazie.
     
     Funkcja drawPoint wyrysowuje na obrazie okręgi w miejscu wystąpienia 
     minucji. W zależnoci od typu okręg ma kolor zielony lub czerwony.
@@ -195,7 +195,7 @@ def drawPoint(img,x,y,t):
     """
     width,height = img.shape
     img = img*255
-    color_circle = " "
+    colorCircle = " "
     imgM = np.zeros((width,height, 3), np.uint8)
     imgM[:, :, 0] = img
     imgM[:, :, 1] = img
@@ -223,7 +223,7 @@ def matrixSearch(img,i,j):
     :param j: Współrzędna y.
     :type j: int
     :returns: Typ minucji: jeśli 0 jest to zakończeni, jeśli 1 jest to 
-    rozwidlenie i jeśli zwracane jest 2 minucja nie występuje w macierzy.
+    rozwidlenie, a jeśli zwracane jest 2 minucja nie występuje w macierzy.
     :rtype: int
     """
     coordinates = [(-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1)]
@@ -252,7 +252,7 @@ def removeMisguided(img,x,y,typeM):
     :type y: list
     :param typeM: Lista zawierająca określenie typu danej minucji.
     :type typeM: list
-    :returns: Współrzędne x i y oraz typ minucji.
+    :returns: Współrzędne x, współrzędne y, typ minucji.
     :rtype: list, list, list
     """
     remNum = []
