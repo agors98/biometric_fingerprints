@@ -19,7 +19,7 @@ def openCF(self):
     Funkcja openCF otwiera okno dialogowe i pozwala na wgranie obrazu
     z plików komputera. Wywoływana jest funkcja changeImage, która
     zmienia wyświetlany obraz. Dodatkowo następuje ustawienie zmiennej 
-    infomującej o pochodzeniu pliku na plik z komputera.
+    infomującej o pochodzeniu pliku z komputera na True.
     :returns: None
     '''
     global filepath, image, inCF, imageprep
@@ -89,7 +89,7 @@ def openDB(self):
     
     Funkcja openDB podejmuje próbę wczytania obrazu z bazy danych. 
     Dodatkowo następuje ustawienie zmiennej infomującej o pochodzeniu pliku
-    na plik z bazy.
+    na False.
     :returns: None
     '''
     global inCF
@@ -101,7 +101,7 @@ def openDB(self):
 def checkNumber(user_input): 
     ''' Funkcja sprawdzająca czy wprowadzane dane są cyframi.
     
-    Funkcja checkNumber sprawdza czy wprowadzane sane są cyframi.
+    Funkcja checkNumber sprawdza czy wprowadzane dane są cyframi.
     :parma user_input: Dane wprowadzane przez użytkownika.
     :type user_input: str
     :returns: True, jeżeli wprowadzane dane są cyframi, False jeśli nie.
@@ -129,9 +129,8 @@ def executeDB(self, openFile, id_person, nr):
     Przed wywołaniem sprawdzana jest obecność danych opisywanych przekazanymi
     parametrami w bazie. Operacja odczytu wykona się tylko jeżeli dane
     znajdują się w bazie, natomiast zapisu tylko w sytuacji ich braku.
-    lub zapisu pliku do bazy danych. Odczyt wiąże się ze zmianą obrazu 
-    wyświetlanego.
-    :param openFile: Informacje czy wykonana operacja ma byc odczytem.
+    Odczyt wiąże się ze zmianą obrazu wyświetlanego.
+    :param openFile: Informacje czy wykonana operacja ma być odczytem.
     :type openFile: bool
     :param id_person: ID osoby.
     :type id_person: str
@@ -194,7 +193,7 @@ def executeProgram(self):
     ''' Funkcja rozpoczynjąca proces ekstrakcji.
     
     Funkcja executeProgram rozpoczyna proces ekstrakcji cech z dostarczanego
-    odcisku palca. Jej wynikiem jest uzyskanie obrazu z zaznaczonymi minuncjami 
+    odcisku palca. Jej wynikiem jest uzyskanie obrazu z zaznaczonymi minucjami 
     oraz wektora cech, które są wywietlane w programie. 
     :returns: None
     '''    
