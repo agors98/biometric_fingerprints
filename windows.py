@@ -1,5 +1,5 @@
 """
-Moduł zawierający implementacje dodatkowych okien aplikacji
+Moduł zawierający implementacje dodatkowych okien aplikacji.
 """
 import tkinter as tk
 import functions as f
@@ -29,8 +29,8 @@ def connectToDB(self, openFile):
     """ Funkcja umożliwiająca utworzenie okna połączenia z bazą danych.
     
     Funkcja connectToDB umożliwa utworzenie okna służącego do wpisywania poleceń
-    przekazywanych do bazy danych. Operacja ta może dotyczyć zapisu ub odczytu.
-    :param openFile: Informacje czy wykonana operacja ma byc odczytem.
+    przekazywanych do bazy danych. Operacja ta może dotyczyć zapisu lub odczytu.
+    :param openFile: Informacje czy wykonana operacja ma być odczytem.
     :type openFile: bool
     :returns: None
     """

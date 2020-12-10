@@ -20,9 +20,9 @@ def convertToBytes(filepath):
 def getData(filename):
     ''' Funkcja pobierająca dane na temat obrazu.
     
-    Funkcja getData pobiera dane na teamt obrazu
-    z nazwy pliku przeznaczonego do wgrania, w celu wgrania ich do bazy. 
-    Uzyskiwane wartoci to ID osoby oraz numer zdjęcia.
+    Funkcja getData pobiera dane na temat obrazu
+    z nazwy pliku, w celu wgrania ich do bazy. 
+    Uzyskiwane wartości to ID osoby oraz numer zdjęcia.
     :param filename: Nazwa pliku z obrazem.
     :type filename: str
     :returns: ID osoby, numer zdjęcia.
@@ -39,7 +39,7 @@ def forAllFiles(filespath):
     
     Funkcja forAllFiles łączy się z bazą danych. Następnie uzyskuje odpowiednie
     dane z funkcji: convertToBytes oraz getData. Takie informacje są wgrywane
-    do bazy danych. Operacja jest przeprowadzana dla wszytskich plików w folderze.
+    do bazy danych. Operacja jest przeprowadzana dla wszystkich plików w folderze.
     :param filespath: Ścieżka do folderu z obrazami.
     :type filespath: str
     :returns: None
@@ -56,5 +56,6 @@ def forAllFiles(filespath):
         cursor.execute(save_sql, db_tuple)
         connection.commit()
 
+#Ścieżka do folderu z plikami .png wgrywanymi do bazy
 filespath = "c:/Users/agors/Desktop/Studia/Podstawy biometrii/Projekt/Mój/Dane/DB1/*.png" 
 forAllFiles(filespath)

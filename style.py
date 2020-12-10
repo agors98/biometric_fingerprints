@@ -1,5 +1,5 @@
 """
-Moduł zawierający stałe wartoci (kolory, grafiki, czcionki)
+Moduł zawierający stałe wartości (kolory, grafiki, czcionki)
 """
 import tkinter.font as font
 
@@ -19,7 +19,7 @@ color5='#f9e2e7'
 def getInfo():
     ''' Funkcja pobierająca informacje.
     
-    Funkcja getInfo pobieranie informacje z pliku tekstowego
+    Funkcja getInfo pobiera informacje z pliku tekstowego
     i zapisuje je do zmiennej.
     :returns: None
     '''
