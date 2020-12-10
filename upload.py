@@ -56,6 +56,6 @@ def forAllFiles(filespath):
         cursor.execute(save_sql, db_tuple)
         connection.commit()
 
-#Ścieżka do folderu z plikami .png wgrywanymi do bazy
+#ścieżka do folderu z plikami .png wgrywanymi do bazy
 filespath = "c:/Users/agors/Desktop/Studia/Podstawy biometrii/Projekt/Mój/Dane/DB1/*.png" 
 forAllFiles(filespath)
